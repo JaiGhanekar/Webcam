@@ -22,6 +22,9 @@ import json
 from os.path import join, dirname
 from os import environ
 from watson_developer_cloud import VisualRecognitionV3
+import os
+
+# import line to: from /usr/local/lib/python2.7/dist-packages/watson_developer_cloud import VisualRecognitionV3 as VisualRecognition
 
 # imports for zipUrls function 
 import uuid
@@ -53,58 +56,46 @@ class WatsonVision:
 				zpf.writestr(fileName, response.content)
 		return zpfName
 
-	def createClassifier(self, zipFiles):
+	def createClassifier(self, zipFiles, name):
 		# @zipfile: a list of strings that point to zip files
 		# @classifier: a classifier object for watson
 		# example for creating a classifier
-		tempZipper = []
-		# for fileName in zipFiles:
+
+		strAdd = ''
 		for i in range (0, len(zipFiles)):
 			fileName = zipFiles[i]
 			fileName = fileName.replace('.zip', '')
-			tempObj = open(join(dirname(__file__),  fileName + '.zip'), 'rb')
-			tempZipper.append(tempObj)
-		# send a multipart/form-data with requests in python
-		url = 'https://gateway-a.watsonplatform.net/visual-recognition/api/v3/classifiers?api_key=' + self.myKey + '&version=2016-05-20'
-		# print url
-		# for file in tempZipper:
-		response = requests.post(url, tempZipper[0], tempZipper[1])
-		print(response)
+			strAdd = strAdd + '\"'+ fileName + '_positive_examples=@' + fileName +'.zip' '\"' + ' -F '
+		print strAdd
+		cmd = "curl -X POST -F " + strAdd + '\"name =' + name + '\" ' + '\"https://watson-api-explorer.mybluemix.net/visual-recognition/api/v3/classifiers?api_key=3cbcdb71306a768f85f79f14ff92a358a9c63566&version=2016-05-20\"'
+		# print cmd
+		out = os.system(cmd)
+		return out
 
-		# classifer = json.dumps(self.visual_recognition.create_classifier('people', people_positive_examples = tempZipper[0], tempZipper[1]), indent = 2)
-		classifier = json.dumps(self.visual_recognition.create_classifier('peopleDetector', peopleDetector_positive_examples = response), indent = 2)
-		# with open(join(dirname(__file__), '../resources/trucks.zip'), 'rb') as trucks, open(join(dirname(__file__), '../resources/cars.zip'), 'rb') as cars:
-		# 	classifer = json.dumps(self.visual_recognition.create_classifier('CarsvsTrucks', trucks_positive_examples = trucks, negative_examples = cars), indent = 2)
-		# example for creating a classifier
-		print('Classifier Created Sucessfully.')
-		return classifier
 
-	def predict(self, classifier, urlStr):
+	def predict(self, urlStr, classifierID):
 		# @classifier: a classifier object for watson
 		# @return a json for the image classifed
-		return json.dumps(self.visual_recognition.classifier(images_url = urlStr), indent = 2)
+
+		cmd = "curl -X GET --header \'Accept: application/json\' --header \'Accept-Language: en\' \'https://watson-api-explorer.mybluemix.net/visual-recognition/api/v3/classify?api_key=3cbcdb71306a768f85f79f14ff92a358a9c63566" + '&url=' + urlStr + "&classifier_ids=" + classifierID + "&version=2016-05-20\'"
+		out = os.system(cmd)
+		print out
+		return out
+
+	def clean(self, classifierID):
+		cmd = "curl -X DELETE --header \'Accept: application/json\' \'https://watson-api-explorer.mybluemix.net/visual-recognition/api/v3/classifiers/" + classifierID + "?api_key=3cbcdb71306a768f85f79f14ff92a358a9c63566&version=2016-05-20\'"
+		out = os.system(cmd)
+		print out
+		return out
 
 
-
-# ## test bench
-# a = WatsonVision()
-# #print a.detectFaces('http://a4.files.maxim.com/image/upload/c_fit,cs_srgb,dpr_1.0,h_1200,q_80,w_1200/MTM1MTQzNDQ5NjgxNzM0Mjc1.jpg')
-# # lst = []
-# # lst.append('https://upload.wikimedia.org/wikipedia/commons/4/40/Miranda_Kerr_(6873397963).jpg')
-# # lst.append('https://upload.wikimedia.org/wikipedia/commons/c/c2/Miranda_Ker_(8449761941).jpg')
-# # lst.append('http://www.fashiongonerogue.com/wp-content/uploads/2015/11/Miranda-Kerr-Swarovski-Spring-2016-Campaign04.jpg')
-# # lst.append('http://a4.files.maxim.com/image/upload/c_fit,cs_srgb,dpr_1.0,h_1200,q_80,w_1200/MTM1MTQzNDQ5NjgxNzM0Mjc1.jpg')
-# # lst.append('http://www.speakerscorner.me/wp-content/uploads/2015/12/miranda18.jpg')
-# # lst.append('http://www.prettydesigns.com/wp-content/uploads/2014/01/Miranda-Kerr-Hairstyles-Ombre-Hair.jpg')
-# # lst.append('https://upload.wikimedia.org/wikipedia/commons/7/7f/Miranda_Kerr_(6796124945).jpg')
-# # lst.append('http://orig01.deviantart.net/7898/f/2014/040/4/5/digital_miranda_kerr_by_vannenov-d75s0z2.jpg')
-# # lst.append('http://www.fashiongonerogue.com/wp-content/uploads/2015/07/Miranda-Kerr-Swarovski-2015.jpg')
-# # lst.append('http://townsend-london.com/wp-content/uploads/Miranda_Kerr_01_2381.jpg')
-# # print a.zipper(lst, 'Kerr')
-
-# kerrClass = a.createClassifier(['kerr.zip', 'scarlett.zip'])
-# print a.predict(kerrClass, 'http://stylesweekly.com/wp-content/uploads/2014/07/Miranda-Kerr-Hair-Color.jpg')
-
-
-
-
+## test bench and example use:
+# instance the class
+a = WatsonVision() 
+# make classififier with zip files:
+# possible buggy when zip is not in the same directory with this python file
+a.createClassifier(['kerr.zip', 'jo.zip'],'ppl')
+# find out who is this with predict
+a.predict('https://watson-api-explorer.mybluemix.net/visual-recognition/api/v3/classify?api_key=3cbcdb71306a768f85f79f14ff92a358a9c63566&url=https%3A%2F%2Fupload.wikimedia.org%2Fwikipedia%2Fcommons%2F4%2F40%2FMiranda_Kerr_(6873397963).jpg', 'ppl_104579820')
+#clean delete the classifer
+a.clean('ppl_104579820')
