@@ -39,7 +39,7 @@ class watsonVision:
 		ans = json.dumps(self.visual_recognition.detect_faces(images_url = urlStr), indent = 2)
 		return ans
 
-	def zipURLs(self, lstUrls):
+	def zipper(self, lstUrls):
 		# @lstUrls: a list of urls;
 		# @ans: a zip file, that is saved
 		zpfName = str(uuid.uuid4()) + '.zip'
@@ -85,3 +85,9 @@ lst.append('http://orig01.deviantart.net/7898/f/2014/040/4/5/digital_miranda_ker
 lst.append('http://www.fashiongonerogue.com/wp-content/uploads/2015/07/Miranda-Kerr-Swarovski-2015.jpg')
 lst.append('http://townsend-london.com/wp-content/uploads/Miranda_Kerr_01_2381.jpg')
 print a.zipURLs(lst)
+
+
+
+
+
+
