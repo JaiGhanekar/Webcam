@@ -41,9 +41,9 @@ class watsonVision:
 		
 		return ans
 
-	def uploadClassification(self, zipFile):
+	def createClassification(self, zipFile):
 		# @zipfile: a zip file object
-		# @boolean: True for successful upload, False for failed upload.
+		# @classifier: a classifier object for watson
 
 		# example for creating a classifier
 		with open(join(dirname(__file__), 
@@ -51,15 +51,18 @@ class watsonVision:
 				open(join(dirname(__file__), 
 					'../resources/cars.zip'), 'rb') as cars:
 
-		print(json.dumps(visual_recognition.create_classifier('CarsvsTrucks', trucks_positive_examples=trucks, negative_examples=cars), indent=2))
+		classifer = json.dumps(self.visual_recognition.create_classifier('CarsvsTrucks', trucks_positive_examples = trucks, 
+			negative_examples = cars), indent = 2)
 		# example for creating a classifier
-		
-		return boolean
 
-	def 
+		return classifier
+
+	def predict(self, classifier, urlStr):
+		# @classifier: a classifier object for watson
+		# @return a json for the image classifed
+		return json.dumps(self.visual_recognition.classifier(images_url = urlStr), indent = 2)
 
 
-	def 
 
 
 ## test bench
