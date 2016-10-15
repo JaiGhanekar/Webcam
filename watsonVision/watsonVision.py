@@ -28,7 +28,7 @@ import uuid
 import requests
 from zipfile import ZipFile
 
-class watsonVision:
+class WatsonVision:
 	"""docstring for ClassName"""
 	def __init__(self):
 		self.visual_recognition = VisualRecognitionV3('2016-05-20', api_key='3cbcdb71306a768f85f79f14ff92a358a9c63566')
@@ -71,7 +71,7 @@ class watsonVision:
 
 
 ## test bench
-a = watsonVision()
+a = WatsonVision()
 #print a.detectFaces('http://a4.files.maxim.com/image/upload/c_fit,cs_srgb,dpr_1.0,h_1200,q_80,w_1200/MTM1MTQzNDQ5NjgxNzM0Mjc1.jpg')
 lst = []
 lst.append('https://upload.wikimedia.org/wikipedia/commons/4/40/Miranda_Kerr_(6873397963).jpg')
