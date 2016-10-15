@@ -40,6 +40,11 @@ class watsonVision:
 		# @lstUrls: a list of urls;
 		# @ans: a zip file, that is saved
 
+		
+		return ans
+
+	def 
+
 
 ## test bench
 a = watsonVision()
