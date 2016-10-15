@@ -23,6 +23,11 @@ from os.path import join, dirname
 from os import environ
 from watson_developer_cloud import VisualRecognitionV3
 
+# imports for zipUrls function 
+import uuid
+import requests
+from zipfile import ZipFile
+
 class watsonVision:
 	"""docstring for ClassName"""
 	def __init__(self):
@@ -37,9 +42,16 @@ class watsonVision:
 	def zipURLs(self, lstUrls):
 		# @lstUrls: a list of urls;
 		# @ans: a zip file, that is saved
-
-		
-		return ans
+        zpfName = str(uuid.uuid4()) + '.zip'
+        with ZipFile(zpfName,'a') as zpf:
+        for url in lstUrls:
+        response = requests.get(url)
+        fileName = 'Sample_' + str(lstUrls.index(url))
+        if fileName in zpf.namelist():
+            continue
+        zpf.writestr(fileName, response.content)
+        zpf.close()
+        return zpfName
 
 	def createClassification(self, zipFile):
 		# @zipfile: a zip file object
@@ -66,5 +78,17 @@ class watsonVision:
 
 
 ## test bench
-a = watsonVision()
-print a.detectFaces('http://a4.files.maxim.com/image/upload/c_fit,cs_srgb,dpr_1.0,h_1200,q_80,w_1200/MTM1MTQzNDQ5NjgxNzM0Mjc1.jpg')
+#a = watsonVision()
+#print a.detectFaces('http://a4.files.maxim.com/image/upload/c_fit,cs_srgb,dpr_1.0,h_1200,q_80,w_1200/MTM1MTQzNDQ5NjgxNzM0Mjc1.jpg')
+lst = []
+lst.append('https://upload.wikimedia.org/wikipedia/commons/4/40/Miranda_Kerr_(6873397963).jpg')
+lst.append('https://upload.wikimedia.org/wikipedia/commons/c/c2/Miranda_Ker_(8449761941).jpg')
+lst.append('http://www.fashiongonerogue.com/wp-content/uploads/2015/11/Miranda-Kerr-Swarovski-Spring-2016-Campaign04.jpg')
+lst.append('http://a4.files.maxim.com/image/upload/c_fit,cs_srgb,dpr_1.0,h_1200,q_80,w_1200/MTM1MTQzNDQ5NjgxNzM0Mjc1.jpg')
+lst.append('http://www.speakerscorner.me/wp-content/uploads/2015/12/miranda18.jpg')
+lst.append('http://www.prettydesigns.com/wp-content/uploads/2014/01/Miranda-Kerr-Hairstyles-Ombre-Hair.jpg')
+lst.append('https://upload.wikimedia.org/wikipedia/commons/7/7f/Miranda_Kerr_(6796124945).jpg')
+lst.append('http://orig01.deviantart.net/7898/f/2014/040/4/5/digital_miranda_kerr_by_vannenov-d75s0z2.jpg')
+lst.append('http://www.fashiongonerogue.com/wp-content/uploads/2015/07/Miranda-Kerr-Swarovski-2015.jpg')
+lst.append('http://townsend-london.com/wp-content/uploads/Miranda_Kerr_01_2381.jpg')
+print zipUrls(lst)
