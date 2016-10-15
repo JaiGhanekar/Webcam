@@ -42,31 +42,25 @@ class watsonVision:
 	def zipURLs(self, lstUrls):
 		# @lstUrls: a list of urls;
 		# @ans: a zip file, that is saved
-        zpfName = str(uuid.uuid4()) + '.zip'
-        with ZipFile(zpfName,'a') as zpf:
-            for url in lstUrls:
-                response = requests.get(url)
-                fileName = 'Sample_' + str(lstUrls.index(url))
-                if fileName in zpf.namelist():
-                    continue
-                zpf.writestr(fileName, response.content)
-        zpf.close()
-        return zpfName
+		zpfName = str(uuid.uuid4()) + '.zip'
+		with ZipFile(zpfName,'a') as zpf:
+			for url in lstUrls:
+				response = requests.get(url)
+				fileName = 'Sample_' + str(lstUrls.index(url)) + '.png'
+				if fileName in zpf.namelist():
+					continue
+				zpf.writestr(fileName, response.content)
+		zpf.close()
+		return zpfName
 
 	def createClassification(self, zipFile):
 		# @zipfile: a zip file object
 		# @classifier: a classifier object for watson
 
 		# example for creating a classifier
-		with open(join(dirname(__file__), 
-			'../resources/trucks.zip'), 'rb') as trucks, \
-				open(join(dirname(__file__), 
-					'../resources/cars.zip'), 'rb') as cars:
-
-		classifer = json.dumps(self.visual_recognition.create_classifier('CarsvsTrucks', trucks_positive_examples = trucks, 
-			negative_examples = cars), indent = 2)
+		with open(join(dirname(__file__), '../resources/trucks.zip'), 'rb') as trucks, open(join(dirname(__file__), '../resources/cars.zip'), 'rb') as cars:
+			classifer = json.dumps(self.visual_recognition.create_classifier('CarsvsTrucks', trucks_positive_examples = trucks, negative_examples = cars), indent = 2)
 		# example for creating a classifier
-
 		return classifier
 
 	def predict(self, classifier, urlStr):
@@ -77,7 +71,7 @@ class watsonVision:
 
 
 ## test bench
-#a = watsonVision()
+a = watsonVision()
 #print a.detectFaces('http://a4.files.maxim.com/image/upload/c_fit,cs_srgb,dpr_1.0,h_1200,q_80,w_1200/MTM1MTQzNDQ5NjgxNzM0Mjc1.jpg')
 lst = []
 lst.append('https://upload.wikimedia.org/wikipedia/commons/4/40/Miranda_Kerr_(6873397963).jpg')
@@ -90,4 +84,4 @@ lst.append('https://upload.wikimedia.org/wikipedia/commons/7/7f/Miranda_Kerr_(67
 lst.append('http://orig01.deviantart.net/7898/f/2014/040/4/5/digital_miranda_kerr_by_vannenov-d75s0z2.jpg')
 lst.append('http://www.fashiongonerogue.com/wp-content/uploads/2015/07/Miranda-Kerr-Swarovski-2015.jpg')
 lst.append('http://townsend-london.com/wp-content/uploads/Miranda_Kerr_01_2381.jpg')
-print zipUrls(lst)
+print a.zipURLs(lst)
