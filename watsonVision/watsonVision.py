@@ -46,7 +46,7 @@ class watsonVision:
         with ZipFile(zpfName,'a') as zpf:
             for url in lstUrls:
                 response = requests.get(url)
-                fileName = 'Sample_' + str(lstUrls.index(url))
+                fileName = 'Sample_' + str(lstUrls.index(url)) + '.png'
                 if fileName in zpf.namelist():
                     continue
                 zpf.writestr(fileName, response.content)
@@ -90,4 +90,4 @@ lst.append('https://upload.wikimedia.org/wikipedia/commons/7/7f/Miranda_Kerr_(67
 lst.append('http://orig01.deviantart.net/7898/f/2014/040/4/5/digital_miranda_kerr_by_vannenov-d75s0z2.jpg')
 lst.append('http://www.fashiongonerogue.com/wp-content/uploads/2015/07/Miranda-Kerr-Swarovski-2015.jpg')
 lst.append('http://townsend-london.com/wp-content/uploads/Miranda_Kerr_01_2381.jpg')
-print zipUrls(lst)
+print zipURLs(lst)
