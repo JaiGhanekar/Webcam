@@ -44,12 +44,12 @@ class watsonVision:
 		# @ans: a zip file, that is saved
         zpfName = str(uuid.uuid4()) + '.zip'
         with ZipFile(zpfName,'a') as zpf:
-        for url in lstUrls:
-        response = requests.get(url)
-        fileName = 'Sample_' + str(lstUrls.index(url))
-        if fileName in zpf.namelist():
-            continue
-        zpf.writestr(fileName, response.content)
+            for url in lstUrls:
+                response = requests.get(url)
+                fileName = 'Sample_' + str(lstUrls.index(url))
+                if fileName in zpf.namelist():
+                    continue
+                zpf.writestr(fileName, response.content)
         zpf.close()
         return zpfName
 
@@ -73,7 +73,6 @@ class watsonVision:
 		# @classifier: a classifier object for watson
 		# @return a json for the image classifed
 		return json.dumps(self.visual_recognition.classifier(images_url = urlStr), indent = 2)
-
 
 
 
