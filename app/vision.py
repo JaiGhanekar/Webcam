@@ -104,8 +104,13 @@ class WatsonVision:
         # vr = VisualRecognitionV3('2016-05-20',api_key=apiKey)
             
         # Detect faces in img 
+<<<<<<< HEAD
         listFaces = json.loads(self.visual_recognition.detect_faces(images_url=imgURL).decode('utf-8'))
 
+=======
+        listFaces = self.visual_recognition.detect_faces(images_url=imgURL)
+#        print listFaces
+>>>>>>> 1a8d6f495bac6e2b79a53d7b795aa833f25c652d
         faces = listFaces['images'][0]['faces']
         
         # Instantiate response 
@@ -132,8 +137,7 @@ class WatsonVision:
         
         # Classify single image that has only 1 face 
         else:
-                clf = self.visual_recognition.classify(images_url=imgURL, classifier_ids=classifierID)
-                return clf                
+                clf = self.visual_recognition.classify(images_url=imgURL, classifier_ids=classifierID)           
                 names = []; scores = []; 
                 for pred in clf['images'][0]['classifiers'][0]['classes']:
                     names.append(pred['class']); scores.append(pred['score'])
@@ -148,7 +152,6 @@ class WatsonVision:
                  maxScore = max(scores); 
                  final_preds[faceIndex] = names[scores.index(maxScore)]
         
-        print(resps)
         return final_preds
 
     def clean(self, classifierID):
@@ -157,14 +160,16 @@ class WatsonVision:
 #        print out
         return out
 
+# print(json.dumps(vr.classify(images_file=img, classifier_ids='ppl_838926004'), indent=2))
+
 
 ## test bench and example use:
 # instance the class
-a = WatsonVision() 
+#a = WatsonVision() 
 # make classififier with zip files:
 # possible buggy when zip is not in the same directory with this python file
-a.createClassifier(['ryan.zip', 'linus.zip','jai.zip','tracy.zip','john.zip'],'ppl')
+#a.createClassifier(['ryan.zip', 'linus.zip','jai.zip','tracy.zip','john.zip'],'ppl')
 # find out who is this with predict
-#b = a.splitPredict('https://s13.postimg.org/w5s3cktsn/yls2.jpg', 'ppl_838926004')
+#b = a.splitPredict('https://scontent.xx.fbcdn.net/t31.0-8/13116290_10206005198952382_6645913956018616546_o.jpg', 'ppl_1467320733')
 #clean delete the classifer
 # a.clean('ppl_2145507184')

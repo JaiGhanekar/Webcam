@@ -68,13 +68,19 @@ def upload_file():
     if request.method == 'POST':
       f = request.files['file']
       f.save(secure_filename(f.filename))
-      visionUtil = WatsonVision()
-      result = visionUtil.splitPredict(url_for(sendImage, path = f.filename), 'ppl_1905871502')
-      print(f.filename, file=sys.stderr)
-      return jsonify({'result':result})
+      r = request.get('/process?fileName='+ f.filename)
+      print(r.json())
+      return 'success'
       #return 'file uploaded successfully'
     else:
         return render_template('upload.html')
+
+@app.route('/process')
+def process():
+    fileName = request.args.get('fileName')
+    visionUtil = WatsonVision()
+    result = visionUtil.splitPredict('http://192.241.132.19/img/' + fileName, 'ppl_1905871502')
+    return jsonify({'result':result})
 
 
 
