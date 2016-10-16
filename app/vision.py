@@ -146,7 +146,6 @@ class WatsonVision:
                  maxScore = max(scores); 
                  final_preds[faceIndex] = names[scores.index(maxScore)]
         
-        print(resps)
         return final_preds
 
     def clean(self, classifierID):
