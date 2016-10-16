@@ -69,7 +69,7 @@ def upload_file():
       f = request.files['file']
       f.save(secure_filename(f.filename))
       visionUtil = WatsonVision()
-      reult = visionUtil.splitPredict('127.0.0.1'+ ':5000' + '/img/' + f.filename, 'ppl_1905871502')
+      result = visionUtil.splitPredict('http://192.241.132.19/' + 'img/' + f.filename, 'ppl_1905871502')
       return jsonify({'result':result})
       #return 'file uploaded successfully'
     else:
@@ -79,4 +79,4 @@ def upload_file():
 
 
 if __name__ == "__main__":
-    app.run()
+    app.run(host='0.0.0.0', port=80)
