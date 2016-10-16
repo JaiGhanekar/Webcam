@@ -69,14 +69,8 @@ def upload_file():
     if request.method == 'POST':
       f = request.files['file']
       f.save(secure_filename(f.filename))
-      img = open(f.filename, 'rb')
-      url = 'http://uploads.im/api?upload'
-      files = {'file': img}
-      r = requests.post(url, files=files)
-      rawJson = r.json()
-      img_path = rawJson['data']['img_url'].encode('utf8')
       visionUtil = WatsonVision()
-      result = visionUtil.splitPredict(img_path, 'ppl_1905871502')
+      result = visionUtil.splitPredict(send_file(os.path.abspath('') + "/" + f.filename), 'ppl_1905871502')
       return jsonify({'result':result})
       #return 'file uploaded successfully'
     else:
