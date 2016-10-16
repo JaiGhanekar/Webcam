@@ -103,7 +103,6 @@ class WatsonVision:
 			
 		# Detect faces in img 
 		listFaces = self.visual_recognition.detect_faces(images_url=imgURL)
-		print(listFaces, file=sys.stderr)
 		faces = listFaces['images'][0]['faces']
 		
 		# Instantiate response 
