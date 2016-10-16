@@ -6,13 +6,12 @@ import socket
 import os
 from vision import WatsonVision
 from werkzeug import secure_filename
-import requests
+import requests 
 app = Flask(__name__, static_url_path='/static', template_folder='./templates')
 app.config['UPLOAD_FOLDER'] = os.path.abspath('') + "/img/"
 ALLOWED_EXTENSIONS = ['jpg,png']
 app.config['DEBUG'] = True
 app.config['SECRET_KEY'] = 'pizza'
-
 
 
 
@@ -70,20 +69,18 @@ def upload_file():
     if request.method == 'POST':
       f = request.files['file']
       f.save(secure_filename(f.filename))
-      r = requests.get('http://192.241.132.19/process?fileName='+ f.filename)
-      print(r.json())
-      return 'success'
+      img = open(f.filename, 'rb')
+      url = 'http://uploads.im/api?upload'
+      files = {'file': img}
+      r = requests.post(url, files=files)
+      rawJson = r.json()
+      img_path = rawJson['data']['img_url'].encode('utf8')
+      visionUtil = WatsonVision()
+      result = visionUtil.splitPredict(img_path, 'ppl_1905871502')
+      return jsonify({'result':result})
       #return 'file uploaded successfully'
     else:
         return render_template('upload.html')
-
-@app.route('/process')
-def process():
-    fileName = request.args.get('fileName')
-    print(filename)
-    visionUtil = WatsonVision()
-    result = visionUtil.splitPredict('http://192.241.132.19/img/' + fileName, 'ppl_1905871502')
-    return jsonify({'result':result})
 
 
 
