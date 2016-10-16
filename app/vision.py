@@ -15,26 +15,32 @@
 # from watson_developer_cloud import VisualRecognitionV3
 
 # visual_recognition = VisualRecognitionV3('2016-05-20', 
-# 	api_key='{3cbcdb71306a768f85f79f14ff92a358a9c63566}')
+#     api_key='{3cbcdb71306a768f85f79f14ff92a358a9c63566}')
 # print(json.dumps(visual_recognition.detect_faces('/Users/ryanli/Documents/hackRice2016/testImg.jpg')))
 
+import time
+import requests
+import uuid
+from PIL import Image
 import json
 from os.path import join, dirname
 from os import environ
 from watson_developer_cloud import VisualRecognitionV3
+from collections import defaultdict
 import os
+from io import BytesIO
 
 # import line to: from /usr/local/lib/python2.7/dist-packages/watson_developer_cloud import VisualRecognitionV3 as VisualRecognition
 
 # imports for zipUrls function 
-import uuid
-import requests
+# import uuid
+# import requests
 from zipfile import ZipFile
 
 class WatsonVision:
 	"""docstring for ClassName"""
 	def __init__(self):
-		self.myKey = '3cbcdb71306a768f85f79f14ff92a358a9c63566'
+		self.myKey = '831bb3c24f7bcc0755f7d538fa651d0dc6323296'
 		self.visual_recognition = VisualRecognitionV3('2016-05-20', api_key = self.myKey)
 
 	# @staticmethod
@@ -66,7 +72,8 @@ class WatsonVision:
 			fileName = zipFiles[i]
 			fileName = fileName.replace('.zip', '')
 			strAdd = strAdd + '\"'+ fileName + '_positive_examples=@' + fileName +'.zip' '\"' + ' -F '
-		cmd = "curl -X POST -F " + strAdd + '\"name =' + name + '\" ' + '\"https://watson-api-explorer.mybluemix.net/visual-recognition/api/v3/classifiers?api_key=3cbcdb71306a768f85f79f14ff92a358a9c63566&version=2016-05-20\"'
+		print(strAdd)
+		cmd = "curl -X POST -F " + strAdd + '\"name =' + name + '\" ' + '\"https://watson-api-explorer.mybluemix.net/visual-recognition/api/v3/classifiers?api_key=831bb3c24f7bcc0755f7d538fa651d0dc6323296&version=2016-05-20\"'
 		# print cmd
 		out = os.system(cmd)
 		return out
@@ -75,26 +82,84 @@ class WatsonVision:
 	def predict(self, urlStr, classifierID):
 		# @classifier: a classifier object for watson
 		# @return a json for the image classifed
-		cmd = "curl -X GET --header \'Accept: application/json\' --header \'Accept-Language: en\' \'https://watson-api-explorer.mybluemix.net/visual-recognition/api/v3/classify?api_key=3cbcdb71306a768f85f79f14ff92a358a9c63566" + '&url=' + urlStr + "&classifier_ids=" + classifierID + "&version=2016-05-20\'"
+
+		cmd = "curl -X GET --header \'Accept: application/json\' --header \'Accept-Language: en\' \'https://watson-api-explorer.mybluemix.net/visual-recognition/api/v3/classify?api_key=831bb3c24f7bcc0755f7d538fa651d0dc6323296" + '&url=' + urlStr + "&classifier_ids=" + classifierID + "&version=2016-05-20\'"
 		out = os.system(cmd)
+#        print out
 		return out
+
+	def splitPredict(self, imgURL, classifierID):
+		# predicts the identity of faces in pictures with 1, 2, or possibly more faces. 
+		# @imgURL: URL of image to be analyzed
+		# returns @resps: dictionary with keys = face #, values = [identity, score]
+
+		# Testing import codes: 
+#       img = open(join(dirname(__file__), imgFileName), 'rb')
+#       with Image.open(BytesIO(requests.get(imgURL).content)) as imgObj:
+	
+		# create Visual Recognition Class Object 
+		# vr = VisualRecognitionV3('2016-05-20',api_key=apiKey)
+			
+		# Detect faces in img 
+		listFaces = self.visual_recognition.detect_faces(images_url=imgURL)
+		faces = listFaces['images'][0]['faces']
+		
+		# Instantiate response 
+		resps = defaultdict(list)
+
+		# CLassify sub-images of cropped faces if image has >2 faces
+		if len(faces) >= 2:   
+			with Image.open(BytesIO(requests.get(imgURL).content)) as imgObj:
+				imgFileName = str(uuid.uuid4()) + '.png'
+				imgObj.save(imgFileName)
+				for face in faces: 
+					bbox = face['face_location']
+					box = (bbox['left'],bbox['top'],bbox['left']+bbox['width'],bbox['top']+bbox['height'])
+					tempImg = imgObj.crop(box)
+					tempImgFileName = 'face_' + str(faces.index(face)) + '.png'
+					tempImg.save(tempImgFileName)
+					names = []; scores = []; 
+					with open(join(dirname(__file__), tempImgFileName), 'rb') as tempImg:           
+						a = self.visual_recognition.classify(images_file=tempImg, classifier_ids=classifierID)
+						for pred in a['images'][0]['classifiers'][0]['classes']:
+							names.append(pred['class']); scores.append(pred['score'])
+					resps[faces.index(face)].append(names)
+					resps[faces.index(face)].append(scores)
+		
+		# Classify single image that has only 1 face 
+		else:
+				a = self.visual_recognition.classify(images_url=imgURL, classifier_ids=classifierID)
+				names = []; scores = []; 
+				for pred in a['images'][0]['classifiers'][0]['classes']:
+					names.append(pred['class']); scores.append(pred['score'])
+				resps[0].append(names); resps[0].append(scores)
+		
+			
+		# Return final prediction responses 
+		final_preds = {}
+		for faceIndex in resps.keys():
+				 results = resps[faceIndex]
+				 names = results[0]; scores = results[1];
+				 maxScore = max(scores); 
+				 final_preds[faceIndex] = names[scores.index(maxScore)]
+		
+		print(resps)
+		return final_preds
 
 	def clean(self, classifierID):
-		cmd = "curl -X DELETE --header \'Accept: application/json\' \'https://watson-api-explorer.mybluemix.net/visual-recognition/api/v3/classifiers/" + classifierID + "?api_key=3cbcdb71306a768f85f79f14ff92a358a9c63566&version=2016-05-20\'"
+		cmd = "curl -X DELETE --header \'Accept: application/json\' \'https://watson-api-explorer.mybluemix.net/visual-recognition/api/v3/classifiers/" + classifierID + "?api_key=831bb3c24f7bcc0755f7d538fa651d0dc6323296&version=2016-05-20\'"
 		out = os.system(cmd)
+#        print out
 		return out
-	def getClassifiers(self):
-		return requests.get('https://watson-api-explorer.mybluemix.net/visual-recognition/api/v3/classifiers?api_key=3cbcdb71306a768f85f79f14ff92a358a9c63566&version=2016-05-20').json()[0]['classifier_id']
 
 
-
-# ## test bench and example use:
-# # instance the class
-# a = WatsonVision() 
-# # make classififier with zip files:
-# # possible buggy when zip is not in the same directory with this python file
-# a.createClassifier(['kerr.zip', 'jo.zip'],'ppl')
-# # find out who is this with predict
-# a.predict('https://watson-api-explorer.mybluemix.net/visual-recognition/api/v3/classify?api_key=3cbcdb71306a768f85f79f14ff92a358a9c63566&url=https%3A%2F%2Fupload.wikimedia.org%2Fwikipedia%2Fcommons%2F4%2F40%2FMiranda_Kerr_(6873397963).jpg', 'ppl_104579820')
-# #clean delete the classifer
-# a.clean('ppl_104579820')
+## test bench and example use:
+# instance the class
+#a = WatsonVision() 
+# make classififier with zip files:
+# possible buggy when zip is not in the same directory with this python file
+# a.createClassifier(['ryan.zip', 'linus.zip','jai.zip','tracy.zip','john.zip'],'ppl')
+# find out who is this with predict
+#print(a.splitPredict('https://s15.postimg.org/4d24cgjx7/test2.jpg', 'ppl_1905871502'))
+#clean delete the classifer
+# a.clean('ppl_2145507184')
