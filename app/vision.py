@@ -131,8 +131,7 @@ class WatsonVision:
         
         # Classify single image that has only 1 face 
         else:
-                clf = self.visual_recognition.classify(images_url=imgURL, classifier_ids=classifierID)
-                return clf                
+                clf = self.visual_recognition.classify(images_url=imgURL, classifier_ids=classifierID)           
                 names = []; scores = []; 
                 for pred in clf['images'][0]['classifiers'][0]['classes']:
                     names.append(pred['class']); scores.append(pred['score'])
@@ -159,11 +158,11 @@ class WatsonVision:
 
 ## test bench and example use:
 # instance the class
-a = WatsonVision() 
+#a = WatsonVision() 
 # make classififier with zip files:
 # possible buggy when zip is not in the same directory with this python file
-a.createClassifier(['ryan.zip', 'linus.zip','jai.zip','tracy.zip','john.zip'],'ppl')
+#a.createClassifier(['ryan.zip', 'linus.zip','jai.zip','tracy.zip','john.zip'],'ppl')
 # find out who is this with predict
-#b = a.splitPredict('https://s13.postimg.org/w5s3cktsn/yls2.jpg', 'ppl_838926004')
+#b = a.splitPredict('http://192.241.132.19/img/IMG_5023.jpg', 'ppl_1467320733')
 #clean delete the classifer
 # a.clean('ppl_2145507184')
