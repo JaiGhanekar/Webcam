@@ -66,7 +66,6 @@ class WatsonVision:
 			fileName = zipFiles[i]
 			fileName = fileName.replace('.zip', '')
 			strAdd = strAdd + '\"'+ fileName + '_positive_examples=@' + fileName +'.zip' '\"' + ' -F '
-		print strAdd
 		cmd = "curl -X POST -F " + strAdd + '\"name =' + name + '\" ' + '\"https://watson-api-explorer.mybluemix.net/visual-recognition/api/v3/classifiers?api_key=3cbcdb71306a768f85f79f14ff92a358a9c63566&version=2016-05-20\"'
 		# print cmd
 		out = os.system(cmd)
@@ -76,26 +75,26 @@ class WatsonVision:
 	def predict(self, urlStr, classifierID):
 		# @classifier: a classifier object for watson
 		# @return a json for the image classifed
-
 		cmd = "curl -X GET --header \'Accept: application/json\' --header \'Accept-Language: en\' \'https://watson-api-explorer.mybluemix.net/visual-recognition/api/v3/classify?api_key=3cbcdb71306a768f85f79f14ff92a358a9c63566" + '&url=' + urlStr + "&classifier_ids=" + classifierID + "&version=2016-05-20\'"
 		out = os.system(cmd)
-		print out
 		return out
 
 	def clean(self, classifierID):
 		cmd = "curl -X DELETE --header \'Accept: application/json\' \'https://watson-api-explorer.mybluemix.net/visual-recognition/api/v3/classifiers/" + classifierID + "?api_key=3cbcdb71306a768f85f79f14ff92a358a9c63566&version=2016-05-20\'"
 		out = os.system(cmd)
-		print out
 		return out
+	def getClassifiers(self):
+		return requests.get('https://watson-api-explorer.mybluemix.net/visual-recognition/api/v3/classifiers?api_key=3cbcdb71306a768f85f79f14ff92a358a9c63566&version=2016-05-20').json()[0]['classifier_id']
 
 
-## test bench and example use:
-# instance the class
-a = WatsonVision() 
-# make classififier with zip files:
-# possible buggy when zip is not in the same directory with this python file
-a.createClassifier(['kerr.zip', 'jo.zip'],'ppl')
-# find out who is this with predict
-a.predict('https://watson-api-explorer.mybluemix.net/visual-recognition/api/v3/classify?api_key=3cbcdb71306a768f85f79f14ff92a358a9c63566&url=https%3A%2F%2Fupload.wikimedia.org%2Fwikipedia%2Fcommons%2F4%2F40%2FMiranda_Kerr_(6873397963).jpg', 'ppl_104579820')
-#clean delete the classifer
-a.clean('ppl_104579820')
+
+# ## test bench and example use:
+# # instance the class
+# a = WatsonVision() 
+# # make classififier with zip files:
+# # possible buggy when zip is not in the same directory with this python file
+# a.createClassifier(['kerr.zip', 'jo.zip'],'ppl')
+# # find out who is this with predict
+# a.predict('https://watson-api-explorer.mybluemix.net/visual-recognition/api/v3/classify?api_key=3cbcdb71306a768f85f79f14ff92a358a9c63566&url=https%3A%2F%2Fupload.wikimedia.org%2Fwikipedia%2Fcommons%2F4%2F40%2FMiranda_Kerr_(6873397963).jpg', 'ppl_104579820')
+# #clean delete the classifer
+# a.clean('ppl_104579820')

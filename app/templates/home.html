@@ -1,47 +1,205 @@
-<!DOCTYPE html>
+<!DOCTYPE HTML>
 <html>
 <head>
-    <title>Hello</title>
-</head>
-<body>
-<script>
-    window.onload = function() {
-     testAPI()
-    };
- function testAPI() {
-    console.log('Welcome!  Fetching your information.... ');
-    FB.api(
-      '/me/photos',
-      'GET',
-      {"type":"uploaded"},
-      function(response) {
-      }
-    );
-  }
+<title>findr</title>
+<link rel="SHORTCUT ICON" href={{ url_for('static', filename='img/findr-favicon-square.png')}}>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href={{ url_for('static', filename='css/w3.css')}}>
 
-    window.fbAsyncInit = function() {
-      FB.init({
-        appId      : '312761532425410',
-        cookie     : true,  // enable cookies to allow the server to access 
-                            // the session
-        xfbml      : true,  // parse social plugins on this page
-        version    : 'v2.5' // use graph api version 2.5
-      });
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<!-- Latest compiled and minified CSS
+<link rel="stylesheet" href="/resources/bootstrap-3.3.7-dist/css/bootstrap.min.css" crossorigin="anonymous">
+-->
 
-  
-  (function(d, s, id) {
-    var js, fjs = d.getElementsByTagName(s)[0];
-    if (d.getElementById(id)) return;
-    js = d.createElement(s); js.id = id;
-    js.src = "//connect.facebook.net/en_US/sdk.js";
-    fjs.parentNode.insertBefore(js, fjs);
-  }(document, 'script', 'facebook-jssdk'));
+<!-- Latest compiled and minified JavaScript -->
+<script src={{ url_for('static', filename='js/bootstrap.min.js')}} crossorigin="anonymous"></script>
+<script src={{ url_for('static', filename='js/dropzone.js')}}></script>
+<script type="text/javascript" language="JavaScript">
+    var url = 'http://nosite01.domainparkingserver.net/?domain_name='
+        + document.domain + '&a_id=127037';
 
+    $(document).ready(function() {
+        //$('#content').attr('src', url);
+        //console.log("Here");
 
+        var prev = '<div class="dz-preview dz-file-preview">\
+            <div class="dz-details">\
+              <img data-dz-thumbnail />\
+              <div class="dz-filename"><span data-dz-name></span></div>\
+              <div class="dz-size" data-dz-size></div>\
+            </div>\
+            <div class="dz-progress"><span class="dz-upload" data-dz-uploadprogress></span></div>\
+            <div class="dz-error-message"><span data-dz-errormessage></span></div>\
+          </div>'
 
+        //var prev2 = "<div class=\"dz-preview dz-file-preview\">\n  <div class=\"dz-image\"><img data-dz-thumbnail /></div>\n  <div class=\"dz-details\">\n    <div class=\"dz-size\"><span data-dz-size></span></div>\n    <div class=\"dz-filename\"><span data-dz-name></span></div>\n  </div>\n  <div class=\"dz-progress\"><span class=\"dz-upload\" data-dz-uploadprogress></span></div>\n  <div class=\"dz-error-message\"><span data-dz-errormessage></span></div>\n</div>";
 
+        var pictureDropzone = $('#picture-dropzone');
+        Dropzone.options.pictureDropzone = {
+          autoProcessQueue: false,
+          dictDefaultMessage: "Drop your subject's photos here.",
+          acceptedFiles:"image/*",
+          previewTemplate: prev,
+          maxFilesize: 25,
+          parallelUploads: 10,
+          addRemoveLinks: true,
+          init: function() {
+            var submitButton = $("#submit-all");
+            myDropzone = this; // closure
+            //submitButton.css("visibility", "hidden");
+            submitButton.hide();
+            submitButton.on("click", function() {
+              myDropzone.processQueue();
+            // autoProcessQueue: true// Tell Dropzone to process all queued files.
+            });
 
+            // You might want to show the submit button only when
+            // files are dropped here:
+            this.on("addedfile", function() {
+              // Show submit button here and/or inform user to click it.
+              submitButton.show();
+            });
+          }
+        }
+
+        /*
+        Dropzone.options.myDropzone = {
+          // Prevents Dropzone from uploading dropped files immediately
+          autoProcessQueue: false,
+          acceptedFiles: "images/*",
+          dictDefaultMessage: "Drop your subject's photos here.",
+          previewTemplate: prev2,
+          maxFilesize: 25,
+          parallelUploads: 10,
+          addRemoveLinks: true,
+          init: function() {
+          var submitButton = document.querySelector("#submit-all")
+          myDropzone = this; // closure
+          submitButton.addEventListener("click", function() {
+            myDropzone.processQueue();
+          // autoProcessQueue: true// Tell Dropzone to process all queued files.
+          });
+
+          // You might want to show the submit button only when
+          // files are dropped here:
+          this.on("addedfile", function() {
+            // Show submit button here and/or inform user to click it.
+            $("#submit-all").show();
+          });
+        }};
+        */
+        /*
+        var myDropzone = new Dropzone(element, {
+          url: "/upload.php",
+          autoProcessQueue: false,
+        });
+
+        $('#imgsubbutt').click(function(){
+          myDropzone.processQueue();
+        });
+        */
+    });
 </script>
-<p>hello world!</p>
+
+<style>
+body,h1 {font-family: "Raleway", sans-serif}
+body, html {height: 100%}
+.bgimg-1 {
+  background-image: url({{ url_for('static', filename='img/background2.jpg')}});
+  min-height: 100%;
+  background-position: center;
+  background-size: cover;
+}
+</style>
+
+<style>
+#drop-block{
+  width:400px;
+  height:300px;
+}
+
+#drop-block form {
+  position:fixed;
+  width:400px;
+  height:300px;
+  overflow:scroll;
+  overflow:hidden;
+}
+
+#drop-block form:hover {
+  opacity:1
+}
+
+#logo{
+  height:175px;
+  display:block;
+  margin:auto;
+  margin-bottom: -50px;
+}
+
+.hover-opacity{
+  opacity:0.60;
+}
+.hover-opacity:hover{
+  opacity:1;
+  filter:alpha(opacity=100);
+  -webkit-backface-visibility:hidden;
+}
+
+#submit-all {
+    background-color: white;
+    color: black;
+    border: 2px solid #555555;
+    padding: 16px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin:auto;
+    display:block;
+    -webkit-transition-duration: 0.4s; /* Safari */
+    transition-duration: 0.4s;
+    cursor: pointer;
+}
+
+#submit-all:hover {
+    background-color: #555555;
+    color: white;
+}
+
+</style>
+
+</head>
+
+<body>
+  <div class="bgimg-1 w3-display-container w3-animate-opacity w3-text-white">
+    <div class="w3-display-middle">
+      <div class="w3-animate-top w3-padding-large">
+        <img src={{ url_for('static', filename='img/findr-logo2.png')}} id="logo">
+      </div>
+      <hr class="w3-border-grey" style="margin:auto;width:40%">
+
+      <div id="drop-block" class="w3-padding-medium w3-large w3-center hover-opacity">
+        <form action="/upload" method="post" enctype="multipart/form-data" class="dropzone" id="picture-dropzone"></form>
+        <!-- <img src="resources/images/grey-zone.png"> -->
+
+      </div>
+      <button id="submit-all">Submit Photos</button>
+    </div>
+
+
+    <div class="w3-display-bottommiddle w3-padding-large">
+      <div class="w3-center w3-medium w3-padding-medium">
+        <a href="/about" class="w3-padding-medium">About Us</a>
+        <a href="/privacy" class="w3-padding-medium">Privacy Policy</a>
+      </div>
+      <a>HackRice 2016:</a>
+      <a>Jai Ghanekar, Ryan Li, Linus Shih, Tracy Fu, John Yan.</a>
+
+    </div>
+  </div>
+
 </body>
+
 </html>
