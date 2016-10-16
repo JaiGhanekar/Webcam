@@ -6,11 +6,13 @@ import socket
 import os
 from vision import WatsonVision
 from werkzeug import secure_filename
+import requests
 app = Flask(__name__, static_url_path='/static', template_folder='./templates')
 app.config['UPLOAD_FOLDER'] = os.path.abspath('') + "/img/"
 ALLOWED_EXTENSIONS = ['jpg,png']
 app.config['DEBUG'] = True
 app.config['SECRET_KEY'] = 'pizza'
+
 
 
 
