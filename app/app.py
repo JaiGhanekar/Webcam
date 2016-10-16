@@ -80,6 +80,7 @@ def upload_file():
 @app.route('/process')
 def process():
     fileName = request.args.get('fileName')
+    print(filename)
     visionUtil = WatsonVision()
     result = visionUtil.splitPredict('http://192.241.132.19/img/' + fileName, 'ppl_1905871502')
     return jsonify({'result':result})
