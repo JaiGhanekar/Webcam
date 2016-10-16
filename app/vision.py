@@ -104,7 +104,8 @@ class WatsonVision:
         # vr = VisualRecognitionV3('2016-05-20',api_key=apiKey)
             
         # Detect faces in img 
-        listFaces = self.visual_recognition.detect_faces(images_url=imgURL)
+        listFaces = json.loads(self.visual_recognition.detect_faces(images_url=imgURL).decode('utf-8'))
+
         faces = listFaces['images'][0]['faces']
         
         # Instantiate response 

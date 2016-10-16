@@ -69,7 +69,8 @@ def upload_file():
       f = request.files['file']
       f.save(secure_filename(f.filename))
       visionUtil = WatsonVision()
-      result = visionUtil.splitPredict('http://192.241.132.19/' + 'img/' + f.filename, 'ppl_1905871502')
+      result = visionUtil.splitPredict(url_for(sendImage, path = f.filename), 'ppl_1905871502')
+      print(f.filename, file=sys.stderr)
       return jsonify({'result':result})
       #return 'file uploaded successfully'
     else:
