@@ -104,7 +104,7 @@ class WatsonVision:
         # vr = VisualRecognitionV3('2016-05-20',api_key=apiKey)
             
         # Detect faces in img 
-        listFaces = json.loads(json.dumps(self.visual_recognition.detect_faces(images_url=imgURL)))
+        listFaces = self.visual_recognition.detect_faces(images_url=imgURL)
 #        print listFaces
         faces = listFaces['images'][0]['faces']
         
@@ -165,6 +165,6 @@ class WatsonVision:
 # possible buggy when zip is not in the same directory with this python file
 #a.createClassifier(['ryan.zip', 'linus.zip','jai.zip','tracy.zip','john.zip'],'ppl')
 # find out who is this with predict
-#b = a.splitPredict('http://192.241.132.19/img/IMG_3973.jpg', 'ppl_1467320733')
+#b = a.splitPredict('https://scontent.xx.fbcdn.net/t31.0-8/13116290_10206005198952382_6645913956018616546_o.jpg', 'ppl_1467320733')
 #clean delete the classifer
 # a.clean('ppl_2145507184')
