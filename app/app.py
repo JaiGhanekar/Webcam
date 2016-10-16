@@ -68,7 +68,7 @@ def upload_file():
     if request.method == 'POST':
       f = request.files['file']
       f.save(secure_filename(f.filename))
-      r = request.get('/process?fileName='+ f.filename)
+      r = requests.get('/process?fileName='+ f.filename)
       print(r.json())
       return 'success'
       #return 'file uploaded successfully'
