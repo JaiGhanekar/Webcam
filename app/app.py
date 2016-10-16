@@ -2,6 +2,7 @@ from flask import Flask, request, send_from_directory,render_template,jsonify,fl
 from werkzeug.contrib.cache import SimpleCache
 import json
 import sys
+import socket
 import os
 from vision import WatsonVision
 from werkzeug import secure_filename
@@ -68,9 +69,8 @@ def upload_file():
       f = request.files['file']
       f.save(secure_filename(f.filename))
       visionUtil = WatsonVision()
-      print(visionUtil.predict('/img/' + f.filename, 'ppl_1905871502'), file = sys.stderr)
-      return "Success"
-      
+      reult = visionUtil.splitPredict('127.0.0.1'+ ':5000' + '/img/' + f.filename, 'ppl_1905871502')
+      return jsonify({'result':result})
       #return 'file uploaded successfully'
     else:
         return render_template('upload.html')

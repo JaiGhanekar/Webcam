@@ -29,6 +29,7 @@ from watson_developer_cloud import VisualRecognitionV3
 from collections import defaultdict
 import os
 from io import BytesIO
+import sys
 
 # import line to: from /usr/local/lib/python2.7/dist-packages/watson_developer_cloud import VisualRecognitionV3 as VisualRecognition
 
@@ -102,6 +103,7 @@ class WatsonVision:
 			
 		# Detect faces in img 
 		listFaces = self.visual_recognition.detect_faces(images_url=imgURL)
+		print(listFaces, file=sys.stderr)
 		faces = listFaces['images'][0]['faces']
 		
 		# Instantiate response 
