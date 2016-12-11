@@ -50,7 +50,7 @@ def data():
         visionUtil.createClassifier([filename], data['data']['name'])
 
     else:
-        return jsonify({'result':'what the fuck'})
+        return jsonify({'result':'what the GOOSE'})
     
 
 @app.route('/js/<path:path>')
@@ -70,7 +70,7 @@ def upload_file():
       f = request.files['file']
       f.save(secure_filename(f.filename))
       visionUtil = WatsonVision()
-      result = visionUtil.splitPredict(send_file(os.path.abspath('') + "/" + f.filename), 'ppl_1905871502')
+      result = visionUtil.splitPredict(os.path.abspath('') + "/" + f.filename, 'ppl_1905871502')
       return jsonify({'result':result})
       #return 'file uploaded successfully'
     else:
